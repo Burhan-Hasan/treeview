@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2017 by original authors @ fontello.com</metadata>
+<defs>
+<font id="fontello" horiz-adv-x="1000" >
+<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="folder" unicode="&#xe800;" d="M929 511v-393q0-51-37-88t-88-37h-679q-51 0-88 37t-37 88v536q0 51 37 88t88 37h179q51 0 88-37t37-88v-18h375q51 0 88-37t37-88z" horiz-adv-x="928.6" />
+
+<glyph glyph-name="folder-open" unicode="&#xe801;" d="M1049 319q0-17-18-37l-187-221q-24-28-67-48t-81-20h-607q-19 0-33 7t-15 24q0 17 17 37l188 221q24 28 67 48t80 20h607q19 0 34-7t15-24z m-192 192v-90h-464q-53 0-110-26t-92-67l-188-221-2-3q0 2-1 7t0 7v536q0 51 37 88t88 37h179q51 0 88-37t37-88v-18h303q52 0 88-37t37-88z" horiz-adv-x="1071.4" />
+
+<glyph glyph-name="cancel-circled-1" unicode="&#xe803;" d="M416 767q173 0 295-122t123-295-123-294-295-122-294 122-122 294 122 295 294 122z m194-537l-120 120 120 120q15 15 15 37t-15 36-37 15-37-15l-120-119-118 119q-15 15-37 15t-37-15-15-36 15-37l119-120-119-120q-15-15-15-36t15-36q16-16 36-16 21 0 38 16l118 119 120-119q17-16 37-16 21 0 37 16 15 15 15 36t-15 36z" horiz-adv-x="834" />
+
+<glyph glyph-name="right-open" unicode="&#xe804;" d="M98 626l226-236q16-16 16-40 0-22-16-38l-226-236q-16-16-40-16t-40 16q-36 36 0 80l186 194-186 196q-36 44 0 80 16 16 41 16t39-16z" horiz-adv-x="340" />
+
+<glyph glyph-name="down-open" unicode="&#xe805;" d="M564 422l-234-224q-18-18-40-18t-40 18l-234 224q-16 16-16 41t16 41q38 38 78 0l196-188 196 188q40 38 78 0 16-16 16-41t-16-41z" horiz-adv-x="580" />
+
+<glyph glyph-name="plus-circle" unicode="&#xe806;" d="M465 797q184 0 315-131t131-316-131-315-315-132-316 132-131 315 131 316 316 131z m223-502l0 112-167 0 0 167-112 0 0-167-168 0 0-112 168 0 0-168 112 0 0 168 167 0z" horiz-adv-x="928" />
+</font>
+</defs>
+</svg>

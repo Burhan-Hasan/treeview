@@ -1,7 +1,79 @@
 body,html{
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+*{
+        box-sizing:border-box;    
 }
 
 .component-treeview{
-    
+    list-style: none;
+    padding: 30px;
+    cursor: pointer;
+    color: #747474;
+    overflow: hidden;
+    //***NO SELECT***
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
+    //***************
+
+     em{
+            position: relative;
+            z-index: 1;
+        }
+    ul{
+    list-style: none;
+        display: none;
+    }
+     .icon-folder-open{
+            display: none;
+        }
+    li.--opened{
+       
+        >.icon-folder{
+            display: none;
+        }
+        >.icon-folder-open{
+            display: inline-block;
+        }
+        >ul{
+            display:block;
+        }
+    }
+    li{
+        padding: 3px;
+        position: relative;
+        &:hover{
+            
+        }
+        &.--active{
+            
+            >span{
+                position: relative;
+               font-weight: bold;
+               z-index: 1;
+               text-indent: 5px;
+            }
+            >span,>em{
+               color:#3399CC;
+            }
+
+            &::before{
+                z-index: 0;
+                content:'';
+                display: block;
+                position: absolute;
+                top:0;
+                width: 500%;
+                left: -200%;
+                height: 22px;
+                 background-color: #EDEDED;
+            }
+        }
+    }
 }
