@@ -11,16 +11,76 @@ var cats = [
     , { id: 8, pid: 2, name: '650' }
 ];
 
+var _id = 11;
 function ComponentTreeView(options) {
     var _prefix = options.element.attr('id') + '-';
     var _tempActiveItem = null;
 
-    var getElementById = function (id) {
-        for (var i = 0; i < options.data.length; ++i) {
-            var cur = options.data[i];
-            if (cur.id == id)
-                return cur;
+    var model = {
+        get: function (id) {
+            for (var i = 0; i < options.data.length; ++i) {
+                var cur = options.data[i];
+                if (cur == undefined)
+                    continue;
+                if (cur.id == id) {
+                    return cur;
+                    break;
+                }
+            }
+        },
+        add: function (item) {
+
+        },
+        delete: function (item) {
+            for (var i = 0; i < options.data.length; ++i) {
+                if (options.data[i] == undefined)
+                    continue;
+                if (options.data[i].id == item.id) {
+                    model.deleteChildsOfPid(options.data[i].id);
+                    delete options.data[i];
+                    break;
+                }
+            }
+        },
+        deleteChildsOfPid: function (pid) {
+            for (var i = 0; i < options.data.length; ++i) {
+                if (options.data[i] == undefined)
+                    continue;
+                if (options.data[i].pid == pid) {
+                    model.deleteChildsOfPid(options.data[i].id);
+                    delete options.data[i];
+                    break;
+                }
+            }
         }
+    }
+
+    var funcDeleteItem = function (item) {
+        model.delete(item);
+        $('#' + _prefix + item.id).remove();
+    }
+
+    var funcAndNewItem = function (newItem) {
+        var parent = $('#' + _prefix + newItem.pid);
+        var parentList = parent.find('>ul');
+        if (parentList.length == 0) {
+            parent.append(document.createElement('ul'));
+            parentList = parent.find('>ul');
+        }
+
+        var li = document.createElement('li');
+        var span = document.createElement('span');
+        span.textContent = newItem.name;
+        li.id = _prefix + newItem.id;
+        if (!parent.find('.icon-folder-open').length)
+            parent[0].insertAdjacentElement('afterBegin', getIconCode('folder-open'));
+        parent[0].className = '--opened';
+
+        li.appendChild(span);
+        li.insertAdjacentElement('afterBegin', getIconCode('folder'));
+        parentList.append(li);
+
+        options.data.push(newItem);
     }
 
     var getIconCode = function (icoName) {
@@ -68,19 +128,25 @@ function ComponentTreeView(options) {
         }
         else if ($target.closest('button').length) {
             var btn = $target.closest('button');
-            if (btn.hasClass('component-treeview-options-save')) {
-                var activeItem = options.element.find('.--active');
-                var activeItemId = activeItem.attr('id');
-                var activeItemDataId = activeItemId.slice(-(activeItemId.length - activeItemId.indexOf('-') - 1));
-                _tempActiveItem = getElementById(activeItemDataId);
 
-                var activeItemObj = {
-                    elem: activeItem,
-                    id: activeItemId,
-                    displayName: activeItem.text(),
-                    object: _tempActiveItem
-                }
+            var activeItem = options.element.find('.--active');
+            var activeItemId = activeItem.attr('id');
+            var activeItemDataId = activeItemId.slice(-(activeItemId.length - activeItemId.indexOf('-') - 1));
+            _tempActiveItem = model.get(activeItemDataId);
+
+            var activeItemObj = {
+                elem: activeItem,
+                id: activeItemDataId,
+                displayName: activeItem.text(),
+                object: _tempActiveItem
+            }
+
+            if (btn.hasClass('component-treeview-options-save')) {
                 options.onAdd(activeItemObj);
+            }
+            else if (btn.hasClass('component-treeview-options-delete')) {
+                console.log('--')
+                funcDeleteItem(activeItemObj);
                 _tempActiveItem = null;
             }
         }
@@ -88,18 +154,18 @@ function ComponentTreeView(options) {
 
     this.dataSource = {
         add: function (input) {
-            console.log('----')
-            console.log(_tempActiveItem)
-            console.log(input)
-            console.log('----')
+            input.pid = _tempActiveItem.id;
+            funcAndNewItem(input);
         }
     }
+
+
 }
 
 var componentTreeView = new ComponentTreeView({
     element: $('#mytreeview'),
     data: cats,
     onAdd: function () {
-        componentTreeView.dataSource.add({ name: 'Salam' })
+        componentTreeView.dataSource.add({ id: ++_id, pid: 0, name: 'E 200 1994' })
     }
 });
