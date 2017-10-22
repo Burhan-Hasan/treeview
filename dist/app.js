@@ -15,7 +15,15 @@ var _id = 11;
 function ComponentTreeView(options) {
     var _prefix = options.element.attr('id') + '-';
     var _tempActiveItem = null;
-
+    var cleanArray = function (actual) {
+        var newArray = new Array();
+        for (var i = 0; i < actual.length; i++) {
+            if (actual[i]) {
+                newArray.push(actual[i]);
+            }
+        }
+        return newArray;
+    }
     var model = {
         get: function (id) {
             for (var i = 0; i < options.data.length; ++i) {
@@ -33,14 +41,13 @@ function ComponentTreeView(options) {
         },
         delete: function (item) {
             for (var i = 0; i < options.data.length; ++i) {
-                if (options.data[i] == undefined)
-                    continue;
                 if (options.data[i].id == item.id) {
                     model.deleteChildsOfPid(options.data[i].id);
                     delete options.data[i];
                     break;
                 }
             }
+            options.data = cleanArray(options.data);
         },
         deleteChildsOfPid: function (pid) {
             for (var i = 0; i < options.data.length; ++i) {
@@ -49,7 +56,7 @@ function ComponentTreeView(options) {
                 if (options.data[i].pid == pid) {
                     model.deleteChildsOfPid(options.data[i].id);
                     delete options.data[i];
-                    break;
+                    continue;
                 }
             }
         }
@@ -156,10 +163,11 @@ function ComponentTreeView(options) {
         add: function (input) {
             input.pid = _tempActiveItem.id;
             funcAndNewItem(input);
+        },
+        data: function () {
+            return options.data;
         }
     }
-
-
 }
 
 var componentTreeView = new ComponentTreeView({
