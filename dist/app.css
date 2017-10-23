@@ -8,7 +8,6 @@ html {
 }
 .component-treeview {
   position: relative;
-  list-style: none;
   padding: 30px;
   cursor: pointer;
   color: #747474;
@@ -20,16 +19,25 @@ html {
   -ms-user-select: none;
   user-select: none;
 }
-.component-treeview em {
-  position: relative;
-  z-index: 1;
-}
 .component-treeview ul {
+  margin-left: 15px;
+  padding: 0;
+  border-left: 1px dotted #ccc;
+  list-style: none;
+}
+.component-treeview .component-treeview-container {
+  position: relative;
+}
+.component-treeview .component-treeview-container ul {
   list-style: none;
   display: none;
 }
-.component-treeview .icon-folder-open {
+.component-treeview .component-treeview-container .icon-folder-open {
   display: none;
+}
+.component-treeview .component-treeview-container em {
+  position: relative;
+  z-index: 1;
 }
 .component-treeview li.--opened > .icon-folder {
   display: none;
@@ -44,6 +52,14 @@ html {
   padding: 3px;
   position: relative;
 }
+.component-treeview li:not(.--base)::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 50%;
+  width: 15px;
+  border-bottom: 1px dotted #ccc;
+}
 .component-treeview li.--cuted {
   opacity: 0.6;
 }
@@ -56,17 +72,6 @@ html {
 .component-treeview li.--active > span,
 .component-treeview li.--active > em {
   color: #3399CC;
-}
-.component-treeview li.--active::before {
-  z-index: 0;
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  width: 500%;
-  left: -200%;
-  height: 22px;
-  background-color: #EDEDED;
 }
 .component-treeview .component-treeview-options {
   position: absolute;

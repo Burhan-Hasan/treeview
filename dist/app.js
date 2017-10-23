@@ -13,18 +13,11 @@ var cats = [
 
 var _id = 11;
 function ComponentTreeView(options) {
+    options["container"] = options.element.find('.component-treeview-container');
+
     var _prefix = options.element.attr('id') + '-';
     var _tempActiveItem = null;
     var _tempPreActiveItem = null;
-    var cleanArray = function (actual) {
-        var newArray = new Array();
-        for (var i = 0; i < actual.length; i++) {
-            if (actual[i]) {
-                newArray.push(actual[i]);
-            }
-        }
-        return newArray;
-    }
 
     var services = {
         cleanArray: function (actual) {
@@ -37,27 +30,35 @@ function ComponentTreeView(options) {
             return newArray;
         }
         , getActiveItem: function () {
-            var activeItem = _tempPreActiveItem = options.element.find('.--active');
-            var activeItemId = activeItem.attr('id');
-            var result = {
-                item: activeItem,
-                id: activeItemId,
-                dataId: activeItemId.slice(-(activeItemId.length - activeItemId.indexOf('-') - 1))
+            var activeItem = options.element.find('.--active');
+            return {
+                id: activeItem.data('uid'),
+                element: activeItem,
+                object: model.get(activeItem.data('uid')),
+                isBaseItem: activeItem.hasClass('--base')
             }
-
-            return result;
         }
         , addHtmlItemTo: function (item, toItem) {
-            var addToList = toItem.find('ul');
+            var addToList = toItem.find('>ul');
             //if ul list is not then create it
             if (!addToList.length) {
                 toItem.append(document.createElement('ul'));
-                addToList = toItem.find('ul');
+                addToList = toItem.find('>ul');
                 toItem.addClass('--opened');
                 if (!toItem.find('.icon-folder-open').length)
                     toItem.prepend(getIconCode('folder-open'));
             }
             addToList.append(item);
+        },
+
+        createNewLiItem: function (id, name) {
+            var li = document.createElement('li');
+            var span = document.createElement('span');
+            span.textContent = name;
+            li.id = _prefix + id;
+            li.dataset.uid = id;
+            li.appendChild(span);
+            return li;
         }
     }
 
@@ -76,6 +77,17 @@ function ComponentTreeView(options) {
         add: function (item) {
 
         },
+        saveChanges: function (item) {
+            for (var i = 0; i < options.data.length; ++i) {
+                var cur = options.data[i];
+                if (cur == undefined)
+                    continue;
+                if (cur.id == item.id) {
+                    options.data[i] = item;
+                    break;
+                }
+            }
+        },
         delete: function (item) {
             for (var i = 0; i < options.data.length; ++i) {
                 if (options.data[i].id == item.id) {
@@ -84,7 +96,7 @@ function ComponentTreeView(options) {
                     break;
                 }
             }
-            options.data = cleanArray(options.data);
+            options.data = services.cleanArray(options.data);
         },
         deleteChildsOfPid: function (pid) {
             for (var i = 0; i < options.data.length; ++i) {
@@ -100,12 +112,14 @@ function ComponentTreeView(options) {
     }
 
     var funcCut = function () {
-        var activeItem = services.getActiveItem();
-        activeItem.item.addClass('--cuted')
+        var activeItem = _tempPreActiveItem = services.getActiveItem();
+        activeItem.element.addClass('--cuted')
     }
     var funcPaste = function (item, pasteTo) {
-        item.removeClass('--cuted');
-        services.addHtmlItemTo(item, pasteTo);
+        item.element.removeClass('--cuted');
+        services.addHtmlItemTo(item.element, pasteTo.element);
+        item.object.pid = pasteTo.isBaseItem ? 0 : pasteTo.object.id;
+        model.saveChanges(item.object);
     }
 
     var funcDeleteItem = function (item) {
@@ -121,10 +135,8 @@ function ComponentTreeView(options) {
             parentList = parent.find('>ul');
         }
 
-        var li = document.createElement('li');
-        var span = document.createElement('span');
-        span.textContent = newItem.name;
-        li.id = _prefix + newItem.id;
+        var li = services.createNewLiItem(newItem.id, newItem.name)
+
         if (!parent.find('.icon-folder-open').length)
             parent[0].insertAdjacentElement('afterBegin', getIconCode('folder-open'));
         parent[0].className = '--opened';
@@ -146,13 +158,9 @@ function ComponentTreeView(options) {
         var docFragmentList = document.createDocumentFragment();
         for (var i = 0; i < options.data.length; i++) {
             if (options.data[i].pid == pid) {
-                var li = document.createElement('li');
-                var span = document.createElement('span');
-                span.textContent = options.data[i].name;
-                li.id = _prefix + options.data[i].id;
-                li.appendChild(span);
-
+                var li = services.createNewLiItem(options.data[i].id, options.data[i].name)
                 docFragmentList.appendChild(li);
+
                 var subItems = funcGenerateDOM(options.data[i].id, options.data);
                 if (subItems) {
                     var ul = document.createElement('ul');
@@ -166,7 +174,7 @@ function ComponentTreeView(options) {
         return docFragmentList.childElementCount ? docFragmentList : null;
     }
 
-    options.element.append($(funcGenerateDOM(0, options.data)));
+    options["container"].append($(funcGenerateDOM(0, options.data)));
 
     options.element.on('click', function (e) {
         var $target = $(e.target);
@@ -174,36 +182,34 @@ function ComponentTreeView(options) {
 
         if ($target.closest('li').length) {
             var parentLi = $target.closest('li');
+
             options.element.find('.--active').removeClass('--active');
             parentLi.addClass('--active');
-            if (parentLi.find('ul').length)
+            if (!parentLi.hasClass('--base') && parentLi.find('ul').length)
                 parentLi.toggleClass('--opened');
         }
         else if ($target.closest('button').length) {
             var btn = $target.closest('button');
 
-            var activeItem = options.element.find('.--active');
-            var activeItemId = activeItem.attr('id');
-            var activeItemDataId = activeItemId.slice(-(activeItemId.length - activeItemId.indexOf('-') - 1));
-            _tempActiveItem = model.get(activeItemDataId);
+            var activeItem = services.getActiveItem();
 
-            var activeItemObj = {
-                elem: activeItem,
-                id: activeItemDataId,
-                displayName: activeItem.text(),
-                object: _tempActiveItem
-            }
-
-            if (btn.hasClass('component-treeview-options-save')) {
-                options.onAdd(activeItemObj);
+            if (btn.hasClass('component-treeview-options-add')) {
+                options.onAdd(activeItem.object);
             }
             else if (btn.hasClass('component-treeview-options-delete')) {
-                console.log('--')
-                funcDeleteItem(activeItemObj);
-                _tempActiveItem = null;
+                if (!activeItem.isBaseItem) {
+                    funcDeleteItem(activeItem.object);
+                    _tempActiveItem = null;
+                }
+            }
+            else if (btn.hasClass('component-treeview-options-save')) {
+                localStorage.setItem('treeview-ds', JSON.stringify(componentTreeView.dataSource.data()))
+
             }
             else if (btn.hasClass('component-treeview-options-cut')) {
-                funcCut();
+                if (!activeItem.isBaseItem) {
+                    funcCut();
+                }
             }
             else if (btn.hasClass('component-treeview-options-paste')) {
                 funcPaste(_tempPreActiveItem, activeItem);
@@ -224,7 +230,7 @@ function ComponentTreeView(options) {
 
 var componentTreeView = new ComponentTreeView({
     element: $('#mytreeview'),
-    data: cats,
+    data: JSON.parse(localStorage.getItem('treeview-ds')),
     onAdd: function () {
         componentTreeView.dataSource.add({ id: ++_id, pid: 0, name: 'E 200 1994' })
     }
