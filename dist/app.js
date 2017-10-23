@@ -13,11 +13,13 @@ var cats = [
 
 var _id = 11;
 function ComponentTreeView(options) {
-    options["container"] = options.element.find('.component-treeview-container');
 
     var _prefix = options.element.attr('id') + '-';
     var _tempActiveItem = null;
     var _tempPreActiveItem = null;
+
+    options["container"] = options.element.find('.component-treeview-container');
+    options["container"].parent().attr('id', _prefix + 0);
 
     var services = {
         cleanArray: function (actual) {
@@ -38,12 +40,7 @@ function ComponentTreeView(options) {
                 isBaseItem: activeItem.hasClass('--base')
             }
         }
-        , addHtmlItemTo: function (item, toItem) {
-            var addToList = toItem.find('>ul');
-            addToList.append(item);
-        },
-
-        createNewLiItem: function (id, name) {
+        , createNewLiItem: function (id, name) {
             var li = document.createElement('li');
             var span = document.createElement('span');
             span.textContent = name;
@@ -54,6 +51,29 @@ function ComponentTreeView(options) {
             li.insertAdjacentElement('afterBegin', getIconCode('folder-open'));
             li.appendChild(document.createElement('ul'))
             return li;
+        }
+        , funcCut: function () {
+            var activeItem = _tempPreActiveItem = services.getActiveItem();
+            activeItem.element.addClass('--cuted')
+        }
+        , funcPaste: function (item, pasteTo) {
+            item.element.removeClass('--cuted');
+            pasteTo.element.find('>ul').append(item.element);
+
+            item.object.pid = pasteTo.isBaseItem ? 0 : pasteTo.object.id;
+            model.saveChanges(item.object);
+        }
+        , funcDeleteItem: function (item) {
+            model.delete(item);
+            $('#' + _prefix + item.id).remove();
+        }
+        , getNextId: function () {
+            var max = 0;
+            for (var i = 0; i < options.data.length; i++) {
+                if (max < options.data[i].id)
+                    max = options.data[i].id;
+            }
+            return ++max;
         }
     }
 
@@ -104,22 +124,6 @@ function ComponentTreeView(options) {
                 }
             }
         }
-    }
-
-    var funcCut = function () {
-        var activeItem = _tempPreActiveItem = services.getActiveItem();
-        activeItem.element.addClass('--cuted')
-    }
-    var funcPaste = function (item, pasteTo) {
-        item.element.removeClass('--cuted');
-        services.addHtmlItemTo(item.element, pasteTo.element);
-        item.object.pid = pasteTo.isBaseItem ? 0 : pasteTo.object.id;
-        model.saveChanges(item.object);
-    }
-
-    var funcDeleteItem = function (item) {
-        model.delete(item);
-        $('#' + _prefix + item.id).remove();
     }
 
     var funcAndNewItem = function (newItem) {
@@ -178,34 +182,32 @@ function ComponentTreeView(options) {
                 options.onAdd(activeItem.object);
             }
             else if (btn.hasClass('component-treeview-options-delete')) {
-                if (!activeItem.isBaseItem) {
-                    funcDeleteItem(activeItem.object);
-                    _tempActiveItem = null;
-                }
+                if (!activeItem.isBaseItem)
+                    services.funcDeleteItem(activeItem.object);
             }
             else if (btn.hasClass('component-treeview-options-save')) {
                 localStorage.setItem('treeview-ds', JSON.stringify(componentTreeView.dataSource.data()))
-
             }
             else if (btn.hasClass('component-treeview-options-cut')) {
-                if (!activeItem.isBaseItem) {
-                    funcCut();
-                }
+                if (!activeItem.isBaseItem)
+                    services.funcCut();
             }
             else if (btn.hasClass('component-treeview-options-paste')) {
-                funcPaste(_tempPreActiveItem, activeItem);
+                services.funcPaste(_tempPreActiveItem, activeItem);
             }
         }
     });
 
     this.dataSource = {
         add: function (input) {
+            input.id = services.getNextId();
             input.pid = _tempActiveItem.id;
             funcAndNewItem(input);
         },
         data: function () {
             return options.data;
-        }
+        },
+
     }
 }
 
@@ -213,6 +215,9 @@ var componentTreeView = new ComponentTreeView({
     element: $('#mytreeview'),
     data: JSON.parse(localStorage.getItem('treeview-ds')),
     onAdd: function () {
-        componentTreeView.dataSource.add({ id: ++_id, pid: 0, name: 'E 200 1994' })
+        var input = prompt("New category").trim();
+        if (input == "")
+            return;
+        componentTreeView.dataSource.add({ name: input })
     }
 });
