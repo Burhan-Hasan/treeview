@@ -99,6 +99,7 @@ function ComponentTreeView(options) {
                     continue;
                 if (cur.id == item.id) {
                     options.data[i] = item;
+                    $('#' + _prefix + item.id).find('>span').text(item.name);
                     break;
                 }
             }
@@ -195,6 +196,9 @@ function ComponentTreeView(options) {
             else if (btn.hasClass('component-treeview-options-paste')) {
                 services.funcPaste(_tempPreActiveItem, activeItem);
             }
+            else if (btn.hasClass('component-treeview-options-edit')) {
+                options.onEdit(activeItem.object);
+            }
         }
     });
 
@@ -207,7 +211,9 @@ function ComponentTreeView(options) {
         data: function () {
             return options.data;
         },
-
+        update: function (item) {
+            model.saveChanges(item);
+        }
     }
 }
 
@@ -219,5 +225,13 @@ var componentTreeView = new ComponentTreeView({
         if (input == "")
             return;
         componentTreeView.dataSource.add({ name: input })
+    },
+    onEdit: function (item) {
+        alert(item.name);
+        var newName = prompt("New category").trim();
+        if (newName == "")
+            return;
+        item.name = newName;
+        componentTreeView.dataSource.update(item);
     }
 });
