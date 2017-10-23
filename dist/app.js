@@ -40,14 +40,6 @@ function ComponentTreeView(options) {
         }
         , addHtmlItemTo: function (item, toItem) {
             var addToList = toItem.find('>ul');
-            //if ul list is not then create it
-            if (!addToList.length) {
-                toItem.append(document.createElement('ul'));
-                addToList = toItem.find('>ul');
-                toItem.addClass('--opened');
-                if (!toItem.find('.icon-folder-open').length)
-                    toItem.prepend(getIconCode('folder-open'));
-            }
             addToList.append(item);
         },
 
@@ -58,6 +50,9 @@ function ComponentTreeView(options) {
             li.id = _prefix + id;
             li.dataset.uid = id;
             li.appendChild(span);
+            li.insertAdjacentElement('afterBegin', getIconCode('folder'));
+            li.insertAdjacentElement('afterBegin', getIconCode('folder-open'));
+            li.appendChild(document.createElement('ul'))
             return li;
         }
     }
@@ -130,19 +125,9 @@ function ComponentTreeView(options) {
     var funcAndNewItem = function (newItem) {
         var parent = $('#' + _prefix + newItem.pid);
         var parentList = parent.find('>ul');
-        if (parentList.length == 0) {
-            parent.append(document.createElement('ul'));
-            parentList = parent.find('>ul');
-        }
+        parent.addClass('--opened')
 
         var li = services.createNewLiItem(newItem.id, newItem.name)
-
-        if (!parent.find('.icon-folder-open').length)
-            parent[0].insertAdjacentElement('afterBegin', getIconCode('folder-open'));
-        parent[0].className = '--opened';
-
-        li.appendChild(span);
-        li.insertAdjacentElement('afterBegin', getIconCode('folder'));
         parentList.append(li);
 
         options.data.push(newItem);
@@ -162,13 +147,8 @@ function ComponentTreeView(options) {
                 docFragmentList.appendChild(li);
 
                 var subItems = funcGenerateDOM(options.data[i].id, options.data);
-                if (subItems) {
-                    var ul = document.createElement('ul');
-                    ul.appendChild(subItems);
-                    li.appendChild(ul);
-                    li.insertAdjacentElement('afterBegin', getIconCode('folder-open'));
-                }
-                li.insertAdjacentElement('afterBegin', getIconCode('folder'));
+                if (subItems)
+                    li.getElementsByTagName('ul')[0].appendChild(subItems)
             }
         }
         return docFragmentList.childElementCount ? docFragmentList : null;
@@ -179,6 +159,7 @@ function ComponentTreeView(options) {
     options.element.on('click', function (e) {
         var $target = $(e.target);
 
+        _tempActiveItem = services.getActiveItem();
 
         if ($target.closest('li').length) {
             var parentLi = $target.closest('li');
