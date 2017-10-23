@@ -15,6 +15,7 @@ var _id = 11;
 function ComponentTreeView(options) {
     var _prefix = options.element.attr('id') + '-';
     var _tempActiveItem = null;
+    var _tempPreActiveItem = null;
     var cleanArray = function (actual) {
         var newArray = new Array();
         for (var i = 0; i < actual.length; i++) {
@@ -24,6 +25,42 @@ function ComponentTreeView(options) {
         }
         return newArray;
     }
+
+    var services = {
+        cleanArray: function (actual) {
+            var newArray = new Array();
+            for (var i = 0; i < actual.length; i++) {
+                if (actual[i]) {
+                    newArray.push(actual[i]);
+                }
+            }
+            return newArray;
+        }
+        , getActiveItem: function () {
+            var activeItem = _tempPreActiveItem = options.element.find('.--active');
+            var activeItemId = activeItem.attr('id');
+            var result = {
+                item: activeItem,
+                id: activeItemId,
+                dataId: activeItemId.slice(-(activeItemId.length - activeItemId.indexOf('-') - 1))
+            }
+
+            return result;
+        }
+        , addHtmlItemTo: function (item, toItem) {
+            var addToList = toItem.find('ul');
+            //if ul list is not then create it
+            if (!addToList.length) {
+                toItem.append(document.createElement('ul'));
+                addToList = toItem.find('ul');
+                toItem.addClass('--opened');
+                if (!toItem.find('.icon-folder-open').length)
+                    toItem.prepend(getIconCode('folder-open'));
+            }
+            addToList.append(item);
+        }
+    }
+
     var model = {
         get: function (id) {
             for (var i = 0; i < options.data.length; ++i) {
@@ -60,6 +97,15 @@ function ComponentTreeView(options) {
                 }
             }
         }
+    }
+
+    var funcCut = function () {
+        var activeItem = services.getActiveItem();
+        activeItem.item.addClass('--cuted')
+    }
+    var funcPaste = function (item, pasteTo) {
+        item.removeClass('--cuted');
+        services.addHtmlItemTo(item, pasteTo);
     }
 
     var funcDeleteItem = function (item) {
@@ -155,6 +201,12 @@ function ComponentTreeView(options) {
                 console.log('--')
                 funcDeleteItem(activeItemObj);
                 _tempActiveItem = null;
+            }
+            else if (btn.hasClass('component-treeview-options-cut')) {
+                funcCut();
+            }
+            else if (btn.hasClass('component-treeview-options-paste')) {
+                funcPaste(_tempPreActiveItem, activeItem);
             }
         }
     });
