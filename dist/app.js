@@ -47,8 +47,8 @@ function ComponentTreeView(options) {
             li.id = _prefix + id;
             li.dataset.uid = id;
             li.appendChild(span);
-            li.insertAdjacentElement('afterBegin', getIconCode('folder'));
-            li.insertAdjacentElement('afterBegin', getIconCode('folder-open'));
+            li.insertAdjacentElement('afterBegin', services.getIconCode('folder'));
+            li.insertAdjacentElement('afterBegin', services.getIconCode('folder-open'));
             li.appendChild(document.createElement('ul'))
             return li;
         }
@@ -74,6 +74,11 @@ function ComponentTreeView(options) {
                     max = options.data[i].id;
             }
             return ++max;
+        }
+        , getIconCode: function (icoName) {
+            var em = document.createElement('em');
+            em.className = 'icon-' + icoName;
+            return em;
         }
     }
 
@@ -138,12 +143,6 @@ function ComponentTreeView(options) {
         options.data.push(newItem);
     }
 
-    var getIconCode = function (icoName) {
-        var em = document.createElement('em');
-        em.className = 'icon-' + icoName;
-        return em;
-    }
-
     var funcGenerateDOM = function (pid) {
         var docFragmentList = document.createDocumentFragment();
         for (var i = 0; i < options.data.length; i++) {
@@ -158,8 +157,8 @@ function ComponentTreeView(options) {
         }
         return docFragmentList.childElementCount ? docFragmentList : null;
     }
-
     options["container"].append($(funcGenerateDOM(0, options.data)));
+
 
     options.element.on('click', function (e) {
         var $target = $(e.target);
