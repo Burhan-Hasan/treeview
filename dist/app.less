@@ -7,6 +7,8 @@ body,html{
         box-sizing:border-box;    
 }
 
+@colors-blue:#3399CC;
+
 .component-treeview{
     position: relative;
     padding: 30px;
@@ -90,6 +92,16 @@ body,html{
         position: absolute;
         top: 0;
         left: 0;
-        padding: 3px;
+        padding: 10px;
+        background-color: @colors-blue;
+        color: #fff;
+        button{
+            border: 1px solid #eee;
+            background-color: #E8F3F9;
+
+            &.--hide{
+                display: none;
+            }
+        }
     }
 }

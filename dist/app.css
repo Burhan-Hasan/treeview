@@ -77,5 +77,14 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 3px;
+  padding: 10px;
+  background-color: #3399CC;
+  color: #fff;
+}
+.component-treeview .component-treeview-options button {
+  border: 1px solid #eee;
+  background-color: #E8F3F9;
+}
+.component-treeview .component-treeview-options button.--hide {
+  display: none;
 }

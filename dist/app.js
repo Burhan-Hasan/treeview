@@ -1,17 +1,3 @@
-var cats = [
-    { id: 1, pid: 0, name: 'Mercedes' }
-    , { id: 2, pid: 0, name: 'BMW' }
-    , { id: 3, pid: 1, name: 'C 300' }
-    , { id: 4, pid: 1, name: 'E 200' }
-    , { id: 9, pid: 4, name: 'E 200 Diesel' }
-    , { id: 10, pid: 4, name: 'E 200 Benzin' }
-    , { id: 5, pid: 1, name: 'E 250' }
-    , { id: 6, pid: 1, name: 'E 300' }
-    , { id: 7, pid: 2, name: '750' }
-    , { id: 8, pid: 2, name: '650' }
-];
-
-var _id = 11;
 function ComponentTreeView(options) {
 
     var _prefix = options.element.attr('id') + '-';
@@ -94,9 +80,6 @@ function ComponentTreeView(options) {
                 }
             }
         },
-        add: function (item) {
-
-        },
         saveChanges: function (item) {
             for (var i = 0; i < options.data.length; ++i) {
                 var cur = options.data[i];
@@ -157,7 +140,8 @@ function ComponentTreeView(options) {
         }
         return docFragmentList.childElementCount ? docFragmentList : null;
     }
-    options["container"].append($(funcGenerateDOM(0, options.data)));
+    if (options.data.length)
+        options["container"].append($(funcGenerateDOM(0, options.data)));
 
 
     options.element.on('click', function (e) {
@@ -186,7 +170,7 @@ function ComponentTreeView(options) {
                     services.funcDeleteItem(activeItem.object);
             }
             else if (btn.hasClass('component-treeview-options-save')) {
-                localStorage.setItem('treeview-ds', JSON.stringify(componentTreeView.dataSource.data()))
+                options.onSave();
             }
             else if (btn.hasClass('component-treeview-options-cut')) {
                 if (!activeItem.isBaseItem)
@@ -203,7 +187,7 @@ function ComponentTreeView(options) {
 
     this.dataSource = {
         add: function (input) {
-            input.id = services.getNextId();
+            //input.id = services.getNextId();
             input.pid = _tempActiveItem.id;
             funcAndNewItem(input);
         },
@@ -212,25 +196,9 @@ function ComponentTreeView(options) {
         },
         update: function (item) {
             model.saveChanges(item);
+        },
+        getSelectedItem: function () {
+            return services.getActiveItem();
         }
     }
 }
-
-var componentTreeView = new ComponentTreeView({
-    element: $('#mytreeview'),
-    data: JSON.parse(localStorage.getItem('treeview-ds')),
-    onAdd: function () {
-        var input = prompt("New category").trim();
-        if (input == "")
-            return;
-        componentTreeView.dataSource.add({ name: input })
-    },
-    onEdit: function (item) {
-        alert(item.name);
-        var newName = prompt("New category").trim();
-        if (newName == "")
-            return;
-        item.name = newName;
-        componentTreeView.dataSource.update(item);
-    }
-});

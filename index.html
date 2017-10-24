@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="dist/app.css">
     <link rel="stylesheet" href="dist/fontello.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -27,6 +27,29 @@
         </ul>
     </div>
     <script src="dist/app.js"></script>
+    <script>
+        var componentTreeView = new ComponentTreeView({
+            element: $('#mytreeview'),
+            data: JSON.parse(localStorage.getItem('treeview-ds')),
+            onAdd: function () {
+                var input = prompt("New category").trim();
+                if (input == "")
+                    return;
+                componentTreeView.dataSource.add({ name: input })
+            },
+            onEdit: function (item) {
+                alert(item.name);
+                var newName = prompt("New category").trim();
+                if (newName == "")
+                    return;
+                item.name = newName;
+                componentTreeView.dataSource.update(item);
+            },
+            onSave: function () {
+                localStorage.setItem('treeview-ds', JSON.stringify(componentTreeView.dataSource.data()));
+            }
+        });
+    </script>
 </body>
 
 </html>
