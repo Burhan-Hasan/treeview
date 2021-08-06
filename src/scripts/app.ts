@@ -23,12 +23,16 @@ export class Treeview {
         template.appendChild(baseElem);
 
         let appendChilds = (ul: HTMLElement, id: number) => {
+            let anyChilds = false;
             for (let i = 0; i < this.dataSource.length; i++) {
+                anyChilds = true;
                 if (this.dataSource[i].pid == id) {
-                    if (ul.parentElement) ul.parentElement.querySelector('span').className = '--has-items';
+                    if (ul.parentElement) ul.parentElement.querySelector('span').classList.add('--has-items');
                     appendChilds(ul.appendChild(genLi(this.dataSource[i])).querySelector('ul'), this.dataSource[i].id);
                 }
             }
+            if (!anyChilds) ul.closest('ul').classList.add('--has-items');
+
         }
         appendChilds(baseElem, 0);
         return template;
