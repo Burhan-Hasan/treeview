@@ -1,55 +1,28 @@
+﻿<!DOCTYPE html>
 <html>
-
 <head>
-    <link rel="stylesheet" href="dist/app.css">
-    <link rel="stylesheet" href="dist/fontello.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <link href="dist/styles/treeview.css" rel="stylesheet" />
 </head>
-
 <body>
-    <div id="mytreeview" class="component-treeview">
-        <div class="component-treeview-options">
-            <button class="component-treeview-options-add">+</button>
-            <button class="component-treeview-options-delete">-</button>
-            <button class="component-treeview-options-edit">edit</button>
-            <button class="component-treeview-options-cut">cut</button>
-            <button class="component-treeview-options-paste">paste</button>
-            <button class="component-treeview-options-save">save</button>
-        </div>
-        <ul>
-            <li class="--base --opened" data-uid="0">
-                <em class="icon-folder-open"></em>
-                <span>Main</span>
-                <ul class="component-treeview-container"></ul>
-            </li>
-
-        </ul>
+    <div style="width:1000px; margin:0 auto;" id="content">
     </div>
-    <script src="dist/app.js"></script>
-    <script>
-        var componentTreeView = new ComponentTreeView({
-            element: $('#mytreeview'),
-            data: JSON.parse(localStorage.getItem('treeview-ds')),
-            onAdd: function () {
-                var input = prompt("New category").trim();
-                if (input == "")
-                    return;
-                componentTreeView.dataSource.add({ name: input })
-            },
-            onEdit: function (item) {
-                alert(item.name);
-                var newName = prompt("New category").trim();
-                if (newName == "")
-                    return;
-                item.name = newName;
-                componentTreeView.dataSource.update(item);
-            },
-            onSave: function () {
-                localStorage.setItem('treeview-ds', JSON.stringify(componentTreeView.dataSource.data()));
-            }
-        });
-    </script>
-</body>
+    <p>
+        <i class="icon-doc"></i>
+        <i class="icon-folder"></i>
+        <i class="icon-folder-open"></i>
+        <i class="icon-plus"></i>
+        <i class="icon-minus"></i>
+        <i class="icon-ok"></i>
+        <i class="icon-plus-squared"></i>
+        <i class="icon-folder-empty"></i>
+        <i class="icon-folder-open-empty"></i>
+        <i class="icon-minus-squared"></i>
+        <i class="icon-minus-squared-alt"></i>
+        <i class="icon-doc-inv"></i>
+        <i class="icon-plus-squared-alt"></i>
+    </p>
 
+    <script src="dist/scripts/treeview.js" charset="UTF-8"></script>
+</body>
 </html>

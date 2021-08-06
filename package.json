@@ -1,0 +1,27 @@
+{
+  "name": "flexgrid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/scripts/flexGrid.js",
+  "dependencies": {
+    "require": "^2.4.20",
+    "webpack-encoding-plugin": "^0.3.1"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "5.2.5",
+    "css-minimizer-webpack-plugin": "^3.0.0",
+    "less": "^4.1.1",
+    "less-loader": "9.0.0",
+    "mini-css-extract-plugin": "1.6.0",
+    "ts-loader": "9.2.1",
+    "typescript": "4.4.0-dev.20210521",
+    "url-loader": "4.1.1",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-encoding-plugin": "0.3.1"
+  },
+  "author": "Burhan Adel",
+  "typings": "dist/types/flex-grid.d.ts",
+  "license": "ISC"
+}
