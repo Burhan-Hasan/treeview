@@ -59,6 +59,17 @@ export class Treeview {
         parent.getElementsByTagName('ul')[0].appendChild(this.genLi(item));
         this.dataSource.push(item);
     }
+
+    removeItem(item: any) {
+        let prefix = this.container.id;
+        let itemId = `${prefix}_${item.id}`;
+        let itemElem = this.container.querySelector('#' + itemId);
+        itemElem.remove();
+
+        let itemIndex = -1;
+        for (var i = 0; i < this.dataSource.length; i++) if (this.dataSource[i].id == item.id) itemIndex = i;
+        if (itemIndex > -1) this.dataSource.splice(itemIndex, 1);
+    }
 }
 
 
@@ -82,6 +93,14 @@ var treeViewComponent = new Treeview(<Treeview>{ container: document.getElementB
 
 document.getElementById('addItem').addEventListener('click', () => {
     treeViewComponent.addItem({
+        id: 16,
+        pid: 2,
+        title: 'Burhan'
+    })
+});
+
+document.getElementById('removeItem').addEventListener('click', () => {
+    treeViewComponent.removeItem({
         id: 16,
         pid: 2,
         title: 'Burhan'
