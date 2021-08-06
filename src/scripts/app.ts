@@ -62,6 +62,10 @@ var testData = <Array<any>>[
     { id: 6, pid: 3, title: 'VNUK' },
     { id: 7, pid: 3, title: 'VNUK' },
     { id: 8, pid: 1, title: 'VNUK' }
+    { id: 11, pid: 4, title: 'VNUK' }
+    { id: 12, pid: 4, title: 'VNUK' }
+    { id: 13, pid: 4, title: 'VNUK' }
+    { id: 14, pid: 4, title: 'VNUK' }
 ];
 
 new Treeview(<Treeview>{ container: document.getElementById('content'), dataSource: testData })
