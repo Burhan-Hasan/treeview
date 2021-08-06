@@ -4,6 +4,7 @@ export class Treeview {
     constructor(data: Treeview) {
         Object.assign(this, data);
         this.container.appendChild(this.genTemplate());
+        this.bindEvents();
     }
 
     genTemplate() {
@@ -36,6 +37,17 @@ export class Treeview {
         }
         appendChilds(baseElem, 0);
         return template;
+    }
+
+    bindEvents() {
+        this.container.addEventListener('click', (e) => {
+            let target = <HTMLElement>e.target;
+            let item = target.closest('li');
+            if (item) {
+                item.getElementsByTagName('span')[0].classList.toggle('--opened');
+                item.getElementsByTagName('ul')[0].classList.toggle('--opened');
+            }
+        });
     }
 }
 
