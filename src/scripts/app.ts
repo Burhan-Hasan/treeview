@@ -72,7 +72,7 @@ export class Treeview {
         let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
         let itemSpan = itemElem.getElementsByTagName('span')[0];
-        let contains = itemSpan.classList.contains('--copy');
+        let contains = itemSpan.classList.contains('--cut');
 
         this.clearClass('--cut');
         this.clearClass('--copy');
@@ -82,9 +82,9 @@ export class Treeview {
 
     paste(itemTo: any) {
         let isCopy: boolean = false;
-        let itemLi = this.container.querySelector('.--copy').closest('li');
+        let itemLi = this.container.querySelector('.--copy') == null ? null : this.container.querySelector('.--copy').closest('li');
         if (itemLi == null)
-            itemLi = this.container.querySelector('.--cut').closest('li');
+            itemLi = this.container.querySelector('.--cut') == null ? null : this.container.querySelector('.--cut').closest('li');
         else
             isCopy = true;
 
@@ -93,7 +93,7 @@ export class Treeview {
 
         let prefix = this.container.id;
         let itemId = `${prefix}_${itemTo.id}`;
-        let itemLiToPaste = this.container.querySelector('#'+ itemId);
+        let itemLiToPaste = this.container.querySelector('#' + itemId);
         if (isCopy) {
             itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi.cloneNode(true));
         }
@@ -181,6 +181,12 @@ document.getElementById('copy').addEventListener('click', () => {
     treeViewComponent.copy(treeViewComponent.getSelected());
     //treeViewComponent.paste();
 });
+
+document.getElementById('cut').addEventListener('click', () => {
+    treeViewComponent.cut(treeViewComponent.getSelected());
+    //treeViewComponent.paste();
+});
+
 
 document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
