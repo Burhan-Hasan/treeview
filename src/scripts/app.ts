@@ -49,40 +49,36 @@ export class Treeview {
             let contains = item.getElementsByTagName('span')[0].classList.contains('--selected');;
             if (item) {
                 this.clearClass('--selected');
-                if (contains) {
-                    item.getElementsByTagName('span')[0].classList.toggle('--opened');
-                    item.getElementsByTagName('ul')[0].classList.toggle('--opened');
-                }
-                item.getElementsByTagName('span')[0].classList.toggle('--selected');
+                if (contains)
+                    item.getElementsByTagName('span')[0].classList.remove('--selected');
+                else
+                    item.getElementsByTagName('span')[0].classList.add('--selected');
             }
+        });
+
+        this.container.addEventListener('dblclick', function (e) {
+            let target = <HTMLElement>e.target;
+            let item = target.closest('li');
+            item.getElementsByTagName('span')[0].classList.toggle('--opened');
+            item.getElementsByTagName('ul')[0].classList.toggle('--opened');
         });
     }
 
-    copy(item: any) {
+    funcCopyCut(item: any, mode: string) {
         let prefix = this.container.id;
         let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
         let itemSpan = itemElem.getElementsByTagName('span')[0];
-        let contains = itemSpan.classList.contains('--copy');
+        let contains = itemSpan.classList.contains('--' + mode);
 
         this.clearClass('--copy');
         this.clearClass('--cut');
-        if (contains) itemSpan.classList.remove('--copy');
-        else itemSpan.classList.add('--copy');
+        if (contains) itemSpan.classList.remove('--' + mode);
+        else itemSpan.classList.add('--' + mode);
     }
 
-    cut(item: any) {
-        let prefix = this.container.id;
-        let itemId = `${prefix}_${item.id}`;
-        let itemElem = this.container.querySelector('#' + itemId);
-        let itemSpan = itemElem.getElementsByTagName('span')[0];
-        let contains = itemSpan.classList.contains('--cut');
-
-        this.clearClass('--cut');
-        this.clearClass('--copy');
-        if (contains) itemSpan.classList.remove('--cut');
-        else itemSpan.classList.add('--cut');
-    }
+    copy(item: any) { this.funcCopyCut(item, 'copy'); }
+    cut(item: any) { this.funcCopyCut(item, 'cut'); }
 
     paste(itemTo: any) {
         let isCopy: boolean = false;
