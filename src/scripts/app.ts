@@ -56,22 +56,22 @@ export class Treeview {
 
     copy(item: any) {
         let prefix = this.container.id;
-        let itemId = `${prefix}_${item.pid}`;
+        let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
 
         this.clearClass('--copy');
         this.clearClass('--cut');
-        itemElem.classList.add('--copy');
+        itemElem.getElementsByTagName('span')[0].classList.add('--copy');
     }
 
     cut(item: any) {
         let prefix = this.container.id;
-        let itemId = `${prefix}_${item.pid}`;
+        let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
 
         this.clearClass('--cut');
         this.clearClass('--copy');
-        itemElem.classList.add('--cut');
+        itemElem.getElementsByTagName('span')[0].classList.add('--cut');
     }
 
     paste(item: any) {
@@ -79,10 +79,10 @@ export class Treeview {
     }
 
     getSelected() {
-        let itemElem = <HTMLElement>this.container.querySelector('--selected');
+        let itemElem = <HTMLElement>this.container.querySelector('.--selected').closest('li');
         if (itemElem) {
             let itemElemIndex = itemElem.dataset.itemId;
-            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i]) == itemElemIndex) return this.dataSource[i];
+            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i].id) == itemElemIndex) return this.dataSource[i];
         }
     }
 
@@ -140,6 +140,19 @@ document.getElementById('addItem').addEventListener('click', () => {
 });
 
 document.getElementById('removeItem').addEventListener('click', () => {
+    treeViewComponent.removeItem({
+        id: 16,
+        pid: 2,
+        title: 'Burhan'
+    })
+});
+
+document.getElementById('copy').addEventListener('click', () => {
+    treeViewComponent.copy(treeViewComponent.getSelected());
+    //treeViewComponent.paste();
+});
+
+document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.removeItem({
         id: 16,
         pid: 2,
