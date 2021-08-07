@@ -1,13 +1,20 @@
 export class Treeview {
     container: HTMLElement;
     dataSource: Array<any>;
-
+    isOpenedDefault: boolean;
     onSelected: () => void;
 
     constructor(data: Treeview) {
         Object.assign(this, data);
         this.container.appendChild(this.genTemplate());
         this.bindEvents();
+        if (this.isOpenedDefault) {
+            let lines = this.container.querySelectorAll('.--has-items');
+            for (var i = 0; i < lines.length; i++) {
+                lines[i].classList.add('--opened');
+                lines[i].parentElement.getElementsByTagName('ul')[0].classList.add('--opened');
+            }
+        }
     }
 
     genLi(data: any) {
@@ -159,7 +166,7 @@ var testData = <Array<any>>[
     { id: 14, pid: 3, title: 'Crub' },
 ];
 
-var treeViewComponent = new Treeview(<Treeview>{ container: document.getElementById('content'), dataSource: testData });
+var treeViewComponent = new Treeview(<Treeview>{ container: document.getElementById('content'), dataSource: testData, isOpenedDefault: false });
 
 document.getElementById('addItem').addEventListener('click', () => {
     treeViewComponent.addItem({
