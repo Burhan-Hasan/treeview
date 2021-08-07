@@ -58,24 +58,52 @@ export class Treeview {
         let prefix = this.container.id;
         let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
+        let itemSpan = itemElem.getElementsByTagName('span')[0];
+        let contains = itemSpan.classList.contains('--copy');
 
         this.clearClass('--copy');
         this.clearClass('--cut');
-        itemElem.getElementsByTagName('span')[0].classList.add('--copy');
+        if (contains) itemSpan.classList.remove('--copy');
+        else itemSpan.classList.add('--copy');
     }
 
     cut(item: any) {
         let prefix = this.container.id;
         let itemId = `${prefix}_${item.id}`;
         let itemElem = this.container.querySelector('#' + itemId);
+        let itemSpan = itemElem.getElementsByTagName('span')[0];
+        let contains = itemSpan.classList.contains('--copy');
 
         this.clearClass('--cut');
         this.clearClass('--copy');
-        itemElem.getElementsByTagName('span')[0].classList.add('--cut');
+        if (contains) itemSpan.classList.remove('--cut');
+        else itemSpan.classList.add('--cut');
     }
 
-    paste(item: any) {
+    paste(itemTo: any) {
+        let isCopy: boolean = false;
+        let itemLi = this.container.querySelector('.--copy').closest('li');
+        if (itemLi == null)
+            itemLi = this.container.querySelector('.--cut').closest('li');
+        else
+            isCopy = true;
 
+        if (itemLi == null) return;
+
+
+        let prefix = this.container.id;
+        let itemId = `${prefix}_${itemTo.id}`;
+        let itemLiToPaste = this.container.querySelector('#'+ itemId);
+        if (isCopy) {
+            itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi.cloneNode(true));
+        }
+        else
+            itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi);
+
+
+        itemLiToPaste.getElementsByTagName('span')[0].classList.add('--has-items');
+        this.clearClass('--cut');
+        this.clearClass('--copy');
     }
 
     getSelected() {
@@ -114,19 +142,21 @@ export class Treeview {
 
 
 var testData = <Array<any>>[
-    { id: 9, pid: 0, title: 'Base' },
-    { id: 1, pid: 9, title: 'Child' },
-    { id: 2, pid: 9, title: 'Child' },
-    { id: 3, pid: 9, title: 'Child' },
-    { id: 4, pid: 1, title: 'VNUK' },
-    { id: 5, pid: 2, title: 'VNUK' },
-    { id: 6, pid: 3, title: 'VNUK' },
-    { id: 7, pid: 3, title: 'VNUK' },
-    { id: 8, pid: 1, title: 'VNUK' },
-    { id: 11, pid: 4, title: 'VNUK' },
-    { id: 12, pid: 4, title: 'VNUK' },
-    { id: 13, pid: 4, title: 'VNUK' },
-    { id: 14, pid: 4, title: 'VNUK' },
+    { id: 9, pid: 0, title: 'Garage' },
+    { id: 1, pid: 9, title: 'Mercedes' },
+    { id: 2, pid: 9, title: 'BMW' },
+    { id: 3, pid: 9, title: 'Mitsubishi' },
+    { id: 4, pid: 1, title: 'C500' },
+    { id: 5, pid: 1, title: 'C300' },
+    { id: 6, pid: 1, title: 'E500' },
+
+    { id: 7, pid: 2, title: 'M3' },
+    { id: 8, pid: 2, title: 'M6' },
+    { id: 11, pid: 2, title: 'X6' },
+
+    { id: 12, pid: 3, title: 'Lancer' },
+    { id: 13, pid: 3, title: 'Pajero' },
+    { id: 14, pid: 3, title: 'Crub' },
 ];
 
 var treeViewComponent = new Treeview(<Treeview>{ container: document.getElementById('content'), dataSource: testData });
@@ -153,9 +183,6 @@ document.getElementById('copy').addEventListener('click', () => {
 });
 
 document.getElementById('paste').addEventListener('click', () => {
-    treeViewComponent.removeItem({
-        id: 16,
-        pid: 2,
-        title: 'Burhan'
-    })
+    treeViewComponent.paste(treeViewComponent.getSelected());
+
 });
