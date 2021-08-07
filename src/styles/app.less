@@ -66,11 +66,23 @@ html, body, table, td, th, tr, tbody, thead, ul, li {
             font-family: fontello;
             display: inline-block;
         }
+
+        &.--selected {
+            &:before {
+                color: #e6971f;
+            }
+        }
+
+        &.--copy, &.--cut {
+            &:before {
+                color: rgb(230,151,31, 0.48);
+            }
+        }
     }
 
     &, ul {
-        &.--opened{
-            display:block;
+        &.--opened {
+            display: block;
         }
     }
 

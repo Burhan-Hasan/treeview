@@ -46,10 +46,50 @@ export class Treeview {
             let target = <HTMLElement>e.target;
             let item = target.closest('li');
             if (item) {
+                this.clearClass('--selected');
                 item.getElementsByTagName('span')[0].classList.toggle('--opened');
+                item.getElementsByTagName('span')[0].classList.toggle('--selected');
                 item.getElementsByTagName('ul')[0].classList.toggle('--opened');
             }
         });
+    }
+
+    copy(item: any) {
+        let prefix = this.container.id;
+        let itemId = `${prefix}_${item.pid}`;
+        let itemElem = this.container.querySelector('#' + itemId);
+
+        this.clearClass('--copy');
+        this.clearClass('--cut');
+        itemElem.classList.add('--copy');
+    }
+
+    cut(item: any) {
+        let prefix = this.container.id;
+        let itemId = `${prefix}_${item.pid}`;
+        let itemElem = this.container.querySelector('#' + itemId);
+
+        this.clearClass('--cut');
+        this.clearClass('--copy');
+        itemElem.classList.add('--cut');
+    }
+
+    paste(item: any) {
+
+    }
+
+    getSelected() {
+        let itemElem = <HTMLElement>this.container.querySelector('--selected');
+        if (itemElem) {
+            let itemElemIndex = itemElem.dataset.itemId;
+            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i]) == itemElemIndex) return this.dataSource[i];
+        }
+    }
+
+    clearClass(className: string) {
+        let selected = this.container.querySelectorAll('.' + className);
+        for (var i = 0; i < selected.length; i++)
+            selected[i].classList.remove(className);
     }
 
     addItem(item: any) {
