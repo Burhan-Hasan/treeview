@@ -41,15 +41,19 @@ export class Treeview {
         appendChilds(baseElem, 0);
         return template;
     }
+
     bindEvents() {
         this.container.addEventListener('click', (e) => {
             let target = <HTMLElement>e.target;
             let item = target.closest('li');
+            let contains = item.getElementsByTagName('span')[0].classList.contains('--selected');;
             if (item) {
                 this.clearClass('--selected');
-                item.getElementsByTagName('span')[0].classList.toggle('--opened');
+                if (contains) {
+                    item.getElementsByTagName('span')[0].classList.toggle('--opened');
+                    item.getElementsByTagName('ul')[0].classList.toggle('--opened');
+                }
                 item.getElementsByTagName('span')[0].classList.toggle('--selected');
-                item.getElementsByTagName('ul')[0].classList.toggle('--opened');
             }
         });
     }
