@@ -3,6 +3,7 @@ export class Treeview {
     container: HTMLElement;
     dataSource: Array<any>;
     isOpenedDefault: boolean;
+    isFoldersSelectable: boolean;
     onSelected: (data: any) => void;
 
     constructor(data: Treeview) {
@@ -60,6 +61,7 @@ export class Treeview {
                 if (contains)
                     item.getElementsByTagName('span')[0].classList.remove('--selected');
                 else {
+                    if (item.getElementsByTagName('span')[0].classList.contains('--has-items') && !this.isFoldersSelectable) return;
                     item.getElementsByTagName('span')[0].classList.add('--selected');
                     this.onSelected && this.onSelected(this.getSelected());
                 }
@@ -117,7 +119,9 @@ export class Treeview {
     }
 
     getSelected() {
-        let itemElem = <HTMLElement>this.container.querySelector('.--selected').closest('li');
+        let itemSelected = <HTMLElement>this.container.querySelector('.--selected');
+        if (itemSelected == null) return null;
+        let itemElem = itemSelected.closest('li');
         if (itemElem) {
             let itemElemIndex = itemElem.dataset.itemId;
             for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i][this.properties.id]) == itemElemIndex) return this.dataSource[i];
@@ -177,9 +181,11 @@ var testData = <Array<any>>[
 ];
 
 var treeViewComponent = new Treeview(<Treeview>{
+    properties: { id: 'id', pid: 'pid', tittle: 'title' },
     container: document.getElementById('content'),
     dataSource: testData,
     isOpenedDefault: true,
+    isFoldersSelectable: false,
     onSelected: (selectedRow) => {
         console.log(selectedRow);
     }
