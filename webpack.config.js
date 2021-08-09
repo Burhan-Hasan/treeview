@@ -34,7 +34,7 @@ module.exports = [
             new CopyPlugin({
                 patterns: [
                     { from: path.resolve(__dirname, "src/font"), to: "font"},
-                    //{ from: path.resolve(__dirname, "src/scripts/app.d.ts"), to: "types"},
+                    { from: path.resolve(__dirname, "src/scripts/app.d.ts"), to: "types"},
                     //{ from: path.resolve(__dirname, "src/scripts/classes/grid-settings.d.ts"), to: "types/classes/" },
                     //{ from: path.resolve(__dirname, "src/scripts/classes/column-options.d.ts"), to: "types/classes/" }
                 ],

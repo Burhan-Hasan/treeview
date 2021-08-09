@@ -2,7 +2,7 @@ export class Treeview {
     container: HTMLElement;
     dataSource: Array<any>;
     isOpenedDefault: boolean;
-    onSelected: () => void;
+    onSelected: (data: any) => void;
 
     constructor(data: Treeview) {
         Object.assign(this, data);
@@ -58,8 +58,10 @@ export class Treeview {
                 this.clearClass('--selected');
                 if (contains)
                     item.getElementsByTagName('span')[0].classList.remove('--selected');
-                else
+                else {
                     item.getElementsByTagName('span')[0].classList.add('--selected');
+                    this.onSelected(this.getSelected());
+                }
             }
         });
 
@@ -166,7 +168,14 @@ var testData = <Array<any>>[
     { id: 14, pid: 3, title: 'Crub' },
 ];
 
-var treeViewComponent = new Treeview(<Treeview>{ container: document.getElementById('content'), dataSource: testData, isOpenedDefault: false });
+var treeViewComponent = new Treeview(<Treeview>{
+    container: document.getElementById('content'),
+    dataSource: testData,
+    isOpenedDefault: true,
+    onSelected: (selectedRow) => {
+        console.log(selectedRow);
+    }
+});
 
 document.getElementById('addItem').addEventListener('click', () => {
     treeViewComponent.addItem({
@@ -186,16 +195,12 @@ document.getElementById('removeItem').addEventListener('click', () => {
 
 document.getElementById('copy').addEventListener('click', () => {
     treeViewComponent.copy(treeViewComponent.getSelected());
-    //treeViewComponent.paste();
 });
 
 document.getElementById('cut').addEventListener('click', () => {
     treeViewComponent.cut(treeViewComponent.getSelected());
-    //treeViewComponent.paste();
 });
-
 
 document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
-
 });
