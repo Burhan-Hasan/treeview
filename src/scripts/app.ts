@@ -128,6 +128,17 @@ export class Treeview {
         }
     }
 
+
+    getSelectedParent() {
+        let itemSelected = <HTMLElement>this.container.querySelector('.--selected');
+        if (itemSelected == null) return null;
+        let itemElemParent = itemSelected.closest('li').parentElement.closest('li');
+        if (itemElemParent) {
+            let itemElemIndex = itemElemParent.dataset.itemId;
+            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i][this.properties.id]) == itemElemIndex) return this.dataSource[i];
+        }
+    }
+
     clearClass(className: string) {
         let selected = this.container.querySelectorAll('.' + className);
         for (var i = 0; i < selected.length; i++)
