@@ -1,4 +1,5 @@
 export class Treeview {
+    properties: Properties;
     container: HTMLElement;
     dataSource: Array<any>;
     isOpenedDefault: boolean;
@@ -20,9 +21,9 @@ export class Treeview {
     genLi(data: any) {
         let prefix = this.container.id;
         let li = document.createElement('li');
-        li.dataset.itemId = data.id;
-        li.id = `${prefix}_${data.id}`;
-        li.innerHTML = `<span>${data.title}</span><ul></ul>`;
+        li.dataset.itemId = data[this.properties.id];
+        li.id = `${prefix}_${data[this.properties.id]}`;
+        li.innerHTML = `<span>${data[this.properties.tittle]}</span><ul></ul>`;
         return li;
     }
 
@@ -37,9 +38,9 @@ export class Treeview {
             let anyChilds = false;
             for (let i = 0; i < this.dataSource.length; i++) {
                 anyChilds = true;
-                if (this.dataSource[i].pid == id) {
+                if (this.dataSource[i][this.properties.pid] == id) {
                     if (ul.parentElement) ul.parentElement.querySelector('span').classList.add('--has-items');
-                    appendChilds(ul.appendChild(this.genLi(this.dataSource[i])).querySelector('ul'), this.dataSource[i].id);
+                    appendChilds(ul.appendChild(this.genLi(this.dataSource[i])).querySelector('ul'), this.dataSource[i][this.properties.id]);
                 }
             }
             if (!anyChilds) ul.closest('ul').classList.add('--has-items');
@@ -60,7 +61,7 @@ export class Treeview {
                     item.getElementsByTagName('span')[0].classList.remove('--selected');
                 else {
                     item.getElementsByTagName('span')[0].classList.add('--selected');
-                    this.onSelected(this.getSelected());
+                    this.onSelected && this.onSelected(this.getSelected());
                 }
             }
         });
@@ -75,7 +76,7 @@ export class Treeview {
 
     funcCopyCut(item: any, mode: string) {
         let prefix = this.container.id;
-        let itemId = `${prefix}_${item.id}`;
+        let itemId = `${prefix}_${item[this.properties.id]}`;
         let itemElem = this.container.querySelector('#' + itemId);
         let itemSpan = itemElem.getElementsByTagName('span')[0];
         let contains = itemSpan.classList.contains('--' + mode);
@@ -101,7 +102,7 @@ export class Treeview {
 
 
         let prefix = this.container.id;
-        let itemId = `${prefix}_${itemTo.id}`;
+        let itemId = `${prefix}_${itemTo[this.properties.id]}`;
         let itemLiToPaste = this.container.querySelector('#' + itemId);
         if (isCopy) {
             itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi.cloneNode(true));
@@ -119,7 +120,7 @@ export class Treeview {
         let itemElem = <HTMLElement>this.container.querySelector('.--selected').closest('li');
         if (itemElem) {
             let itemElemIndex = itemElem.dataset.itemId;
-            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i].id) == itemElemIndex) return this.dataSource[i];
+            for (var i = 0; i < this.dataSource.length; i++) if (String(this.dataSource[i][this.properties.id]) == itemElemIndex) return this.dataSource[i];
         }
     }
 
@@ -131,7 +132,7 @@ export class Treeview {
 
     addItem(item: any) {
         let prefix = this.container.id;
-        let itemId = `${prefix}_${item.pid}`;
+        let itemId = `${prefix}_${item[this.properties.pid]}`;
         let parent = this.container.querySelector('#' + itemId);
         parent.getElementsByTagName('ul')[0].appendChild(this.genLi(item));
         this.dataSource.push(item);
@@ -139,16 +140,23 @@ export class Treeview {
 
     removeItem(item: any) {
         let prefix = this.container.id;
-        let itemId = `${prefix}_${item.id}`;
+        let itemId = `${prefix}_${item[this.properties.id]}`;
         let itemElem = this.container.querySelector('#' + itemId);
         itemElem.remove();
 
         let itemIndex = -1;
-        for (var i = 0; i < this.dataSource.length; i++) if (this.dataSource[i].id == item.id) itemIndex = i;
+        for (var i = 0; i < this.dataSource.length; i++) if (this.dataSource[i][this.properties.id] == item[this.properties.id]) itemIndex = i;
         if (itemIndex > -1) this.dataSource.splice(itemIndex, 1);
     }
 }
 
+export class Properties {
+    id: string;
+    pid: string;
+    tittle: string;
+}
+
+/*
 
 var testData = <Array<any>>[
     { id: 9, pid: 0, title: 'Garage' },
@@ -204,3 +212,5 @@ document.getElementById('cut').addEventListener('click', () => {
 document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
 });
+
+*/
