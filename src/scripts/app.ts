@@ -119,7 +119,14 @@ export class Treeview {
 
         let prefix = this.container.id;
         let itemId = `${prefix}_${itemTo[this.properties.id]}`;
-        let itemLiToPaste = this.container.querySelector('#' + itemId);
+        let itemLiToPaste: HTMLElement = this.container.querySelector('#' + itemId);
+
+        if (!isCopy && this.isSubFolder(itemLi, itemLiToPaste)) {
+            this.clearClass('--cut');
+            this.clearClass('--copy');
+            return false;
+        }
+
         if (isCopy) {
             itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi.cloneNode(true));
         }
@@ -130,6 +137,7 @@ export class Treeview {
         itemLiToPaste.getElementsByTagName('span')[0].classList.add('--has-items');
         this.clearClass('--cut');
         this.clearClass('--copy');
+        return true;
     }
 
     getSelected() {
@@ -142,7 +150,6 @@ export class Treeview {
         }
     }
 
-
     getSelectedParent() {
         let itemSelected = <HTMLElement>this.container.querySelector('.--selected');
         if (itemSelected == null) return null;
@@ -153,6 +160,15 @@ export class Treeview {
         }
     }
 
+
+    isSubFolder(parent: HTMLElement, child: HTMLElement) {
+        let curElem: HTMLElement = child;
+        while (!curElem.classList.contains('treeview-component')) {
+            if (curElem.parentElement == parent) return true;
+            else curElem = curElem.parentElement;
+        }
+        return false;
+    }
     clearClass(className: string) {
         let selected = this.container.querySelectorAll('.' + className);
         for (var i = 0; i < selected.length; i++)
@@ -185,7 +201,6 @@ export class Properties {
     tittle: string;
 }
 
-/*
 
 var testData = <Array<any>>[
     { id: 9, pid: 0, title: 'Garage' },
@@ -244,4 +259,6 @@ document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
 });
 
-*/
+document.getElementById('isSub').addEventListener('click', () => {
+    console.log(treeViewComponent.isSubFolder(document.getElementById('content_2'), document.getElementById('content_12')))
+});
