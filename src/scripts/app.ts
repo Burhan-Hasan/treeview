@@ -8,7 +8,7 @@ export class Treeview {
 
     constructor(data: Treeview) {
         Object.assign(this, data);
-        this.container.appendChild(this.genTemplate());
+        if (this.dataSource != null) this.container.appendChild(this.genTemplate());
         this.bindEvents();
         if (this.isOpenedDefault) {
             let lines = this.container.querySelectorAll('.--has-items');
@@ -17,6 +17,12 @@ export class Treeview {
                 lines[i].parentElement.getElementsByTagName('ul')[0].classList.add('--opened');
             }
         }
+    }
+
+    setDataSource(ds: Array<any>) {
+        this.dataSource = ds;
+        this.container.innerHTML = '';
+        if (this.dataSource != null) this.container.appendChild(this.genTemplate());
     }
 
     genLi(data: any) {
