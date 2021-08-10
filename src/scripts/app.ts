@@ -23,6 +23,14 @@ export class Treeview {
         this.dataSource = ds;
         this.container.innerHTML = '';
         if (this.dataSource != null) this.container.appendChild(this.genTemplate());
+
+        if (this.isOpenedDefault) {
+            let lines = this.container.querySelectorAll('.--has-items');
+            for (var i = 0; i < lines.length; i++) {
+                lines[i].classList.add('--opened');
+                lines[i].parentElement.getElementsByTagName('ul')[0].classList.add('--opened');
+            }
+        }
     }
 
     genLi(data: any) {
@@ -177,6 +185,8 @@ export class Properties {
     tittle: string;
 }
 
+/*
+
 var testData = <Array<any>>[
     { id: 9, pid: 0, title: 'Garage' },
     { id: 1, pid: 9, title: 'Mercedes' },
@@ -233,3 +243,5 @@ document.getElementById('cut').addEventListener('click', () => {
 document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
 });
+
+*/
