@@ -171,8 +171,6 @@ export class Properties {
     tittle: string;
 }
 
-/*
-
 var testData = <Array<any>>[
     { id: 9, pid: 0, title: 'Garage' },
     { id: 1, pid: 9, title: 'Mercedes' },
@@ -196,7 +194,7 @@ var treeViewComponent = new Treeview(<Treeview>{
     container: document.getElementById('content'),
     dataSource: testData,
     isOpenedDefault: true,
-    isFoldersSelectable: false,
+    isFoldersSelectable: true,
     onSelected: (selectedRow) => {
         console.log(selectedRow);
     }
@@ -229,5 +227,3 @@ document.getElementById('cut').addEventListener('click', () => {
 document.getElementById('paste').addEventListener('click', () => {
     treeViewComponent.paste(treeViewComponent.getSelected());
 });
-
-*/
