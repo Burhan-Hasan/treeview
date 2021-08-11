@@ -42,6 +42,13 @@ export class Treeview {
         return li;
     }
 
+    getElemById(id: string) {
+        for (var i = 0; i < this.dataSource.length; i++) {
+            if (this.dataSource[i][this.properties.id] == id) return this.dataSource[i];
+        }
+        return null;
+    }
+
     genTemplate() {
         let template = document.createDocumentFragment();
         //Базовый элемент
@@ -124,7 +131,17 @@ export class Treeview {
         if (!isCopy && this.isSubFolder(itemLi, itemLiToPaste)) {
             this.clearClass('--cut');
             this.clearClass('--copy');
-            return false;
+            return <TreeviewOperationResult>{
+                isSuccess: false,
+                isCopy: isCopy,
+                item: this.getElemById(itemLi.dataset.itemId),
+                pasteTo: itemTo
+            };
+        }
+        if (isCopy) {
+            itemLi.dataset.itemId = '';
+            let subLiItems = itemLi.querySelectorAll('li');
+            for (var i = 0; i < subLiItems.length; i++) subLiItems[i].dataset.itemId = '';
         }
 
         if (isCopy) {
@@ -137,7 +154,12 @@ export class Treeview {
         itemLiToPaste.getElementsByTagName('span')[0].classList.add('--has-items');
         this.clearClass('--cut');
         this.clearClass('--copy');
-        return true;
+        return <TreeviewOperationResult>{
+            isSuccess: true,
+            isCopy: isCopy,
+            item: this.getElemById(itemLi.dataset.itemId),
+            pasteTo: itemTo
+        };;
     }
 
     getSelected() {
@@ -201,6 +223,14 @@ export class Properties {
     tittle: string;
 }
 
+export class TreeviewOperationResult {
+    isSuccess: boolean;
+    isCopy: boolean;
+    item: any;
+    pasteTo: any;
+}
+
+/*
 
 var testData = <Array<any>>[
     { id: 9, pid: 0, title: 'Garage' },
@@ -256,9 +286,10 @@ document.getElementById('cut').addEventListener('click', () => {
 });
 
 document.getElementById('paste').addEventListener('click', () => {
-    treeViewComponent.paste(treeViewComponent.getSelected());
+    console.log(treeViewComponent.paste(treeViewComponent.getSelected()));
 });
 
 document.getElementById('isSub').addEventListener('click', () => {
     console.log(treeViewComponent.isSubFolder(document.getElementById('content_2'), document.getElementById('content_12')))
 });
+*/
