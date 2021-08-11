@@ -122,6 +122,7 @@ export class Treeview {
             isCopy = true;
 
         if (itemLi == null) return;
+        let item = this.getElemById(itemLi.dataset.itemId);
 
 
         let prefix = this.container.id;
@@ -134,14 +135,18 @@ export class Treeview {
             return <TreeviewOperationResult>{
                 isSuccess: false,
                 isCopy: isCopy,
-                item: this.getElemById(itemLi.dataset.itemId),
+                item: item,
                 pasteTo: itemTo
             };
         }
         if (isCopy) {
             itemLi.dataset.itemId = '';
+            itemLi.id = '';
             let subLiItems = itemLi.querySelectorAll('li');
-            for (var i = 0; i < subLiItems.length; i++) subLiItems[i].dataset.itemId = '';
+            for (var i = 0; i < subLiItems.length; i++) {
+                subLiItems[i].dataset.itemId = '';
+                subLiItems[i].id = '';
+            }
         }
 
         if (isCopy) {
@@ -157,7 +162,7 @@ export class Treeview {
         return <TreeviewOperationResult>{
             isSuccess: true,
             isCopy: isCopy,
-            item: this.getElemById(itemLi.dataset.itemId),
+            item: item,
             pasteTo: itemTo
         };;
     }
