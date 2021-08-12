@@ -104,6 +104,7 @@ export class Treeview {
         let itemSpan = itemElem.getElementsByTagName('span')[0];
         let contains = itemSpan.classList.contains('--' + mode);
 
+        this.clearClass('--selected');
         this.clearClass('--copy');
         this.clearClass('--cut');
         if (contains) itemSpan.classList.remove('--' + mode);
@@ -125,11 +126,18 @@ export class Treeview {
         let item = this.getElemById(itemLi.dataset.itemId);
 
 
-        let prefix = this.container.id;
-        let itemId = `${prefix}_${itemTo[this.properties.id]}`;
-        let itemLiToPaste: HTMLElement = this.container.querySelector('#' + itemId);
+        
+        let ulToPaste: HTMLElement = null;
+        if (itemTo != null) {
+            let prefix = this.container.id;
+            let itemId = `${prefix}_${itemTo[this.properties.id]}`;
+            ulToPaste = this.container.querySelector('#' + itemId).getElementsByTagName('ul')[0];
+        }
+        else {
+            ulToPaste = this.container.getElementsByTagName('ul')[0];
+        }
 
-        if (!isCopy && this.isSubFolder(itemLi, itemLiToPaste)) {
+        if (!isCopy && this.isSubFolder(itemLi, ulToPaste.closest('li'))) {
             this.clearClass('--cut');
             this.clearClass('--copy');
             return <TreeviewOperationResult>{
@@ -149,14 +157,16 @@ export class Treeview {
             }
         }
 
-        if (isCopy) {
-            itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi.cloneNode(true));
-        }
+        if (isCopy)
+            ulToPaste.appendChild(itemLi.cloneNode(true));
         else
-            itemLiToPaste.getElementsByTagName('ul')[0].appendChild(itemLi);
+            ulToPaste.appendChild(itemLi);
 
-
-        itemLiToPaste.getElementsByTagName('span')[0].classList.add('--has-items');
+        let spanTitle = ulToPaste.parentElement.getElementsByTagName('span');
+        if (spanTitle) {
+            spanTitle[0].classList.add('--has-items');
+        }
+        
         this.clearClass('--cut');
         this.clearClass('--copy');
         return <TreeviewOperationResult>{
@@ -189,6 +199,7 @@ export class Treeview {
 
 
     isSubFolder(parent: HTMLElement, child: HTMLElement) {
+        if (parent == null || child == null) return false;
         let curElem: HTMLElement = child;
         while (!curElem.classList.contains('treeview-component')) {
             if (curElem.parentElement == parent) return true;
